@@ -1,9 +1,10 @@
 import requests
 from requests.auth import HTTPBasicAuth
 import json
+import getpass
 
 username = input("Enter your GitHub username: ")
-password = input("Enter your Github password: ")
+password = getpass.getpass("Enter your Github password: ")
 print("Issuing request to create an Oauth token...")
 r_data = { "scopes": ["repo", "user"], "note": "test repo_creator token" }
 token_r = requests.post("https://api.github.com/authorizations", 
