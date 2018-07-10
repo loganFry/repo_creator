@@ -1,33 +1,25 @@
-import requests
-from requests.auth import HTTPBasicAuth
 import json
 import getpass
+from user_auth import UserAuth
+from api import Api
 
-user_data = {}
-try:
-    with open('user_data.txt') as user_file:
-        print("Found user data file, attempting to parse")
-        user_data = json.load(user_file)
-except FileNotFoundError:
-    print("User data file does not exist")
+user_data_filename = "user_data.txt"
+user_data = UserAuth()
+user_data.load(user_data_filename)
+base_url = "https://api.github.com"
 
-if "username" in user_data and "token" in user_data:
-    print("Cached user data: ")
-    print("Username: " + user_data["username"])
-    print("Oauth token: " + user_data["token"])
+if user_data.is_valid():
+    print("Read cached user authentication from " + user_data_filename)
+    print("Username: " + user_data.username)
+    print("Oauth token: " + user_data.token)
 else:
-    username = input("Enter your GitHub username: ")
-    password = getpass.getpass("Enter your Github password: ")
+    username = input("Enter your Github username: ")
+    password = getpass.getpass("Enter your Github password: ")    
+    api = Api()
     print("Issuing request to create an Oauth token...")
-    r_data = { "scopes": ["repo", "user"], "note": "repo_creator token" }
-    token_r = requests.post("https://api.github.com/authorizations", 
-                            json=r_data, 
-                            auth=HTTPBasicAuth(username, password))
-    parsed_json = token_r.json()
-    print("Token request response: ")
-    print(token_r)
-    print(token_r.headers)
-    print(json.dumps(parsed_json, indent=4))
-    parsed_json["username"] = username
-    with open('user_data.txt', 'w') as user_file:
-        json.dump(parsed_json, user_file)
+    token_json = api.create_token(username, password, debug=False)
+    print("Success! Your authorization has succeeded")
+    user_data.token = token_json["token"]
+    token_json["username"] = username
+    with open(user_data_filename, 'w') as user_file:
+        json.dump(token_json, user_file)
