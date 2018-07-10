@@ -1,5 +1,6 @@
 import requests
 from requests.auth import HTTPBasicAuth
+from request_logger import RequestLogger
 import uuid
 import json
 
@@ -8,23 +9,49 @@ class Api:
 
     _base_url = "https://api.github.com"
     _authorizations_url = "/authorizations"
+    _repos_url = "/user/repos"
 
-    def __init__(self):
-        pass
+    def __init__(self, logRequests=True):
+        self.logger = RequestLogger()
+        self.logRequests = logRequests
 
     def create_token(self, username, password, 
                     scopes=["repo", "user"], 
-                    note="repo_creator token " + str(uuid.uuid4()),
-                    debug=True):        
-        r_data = { "scopes": scopes, "note": note }
+                    note="repo_creator token " + str(uuid.uuid4())):        
+        options = { "scopes": scopes, "note": note }
         token_r = requests.post(self._base_url + self._authorizations_url, 
-                json=r_data, 
+                json=options, 
                 auth=HTTPBasicAuth(username, password))
-        parsed_body = token_r.json()
-        if debug:
-            print("Response headers: ")
-            for header, val in token_r.headers.items():
-                print("    " + header + ": " + val)                    
-            print("Response body: ")
-            print(json.dumps(parsed_body, indent=4))
-        return parsed_body
+        if self.logRequests:
+            self.logger.log(token_r)
+        return token_r.json()
+
+    def create_repo(self, auth, 
+                    name="TestRepo" + str(uuid.uuid4()), 
+                    description="A repository created by repo_creator", 
+                    private=False, 
+                    auto_init=False):
+        # api options for creating repository
+        options = { 
+            "name": name, 
+            "description": description,
+            "private": private,
+            "auto_init": auto_init
+        }
+
+        # include token to authenticate as user
+        headers = {
+            "Authorization": "token " + auth.token
+        }
+
+        # api url should match base_url/user/repos
+        full_url = self._base_url + self._repos_url
+
+        repo_r = requests.post(full_url, headers=headers, json=options)
+
+        if self.logRequests:
+            print("Url: " + full_url)
+            print("Headers: " + str(headers))
+            print("JSON: " + str(options))
+            self.logger.log(repo_r)
+
