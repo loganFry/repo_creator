@@ -3,9 +3,9 @@ import json
 class UserAuth:
     """ Class to contain all authentication information for a user """
 
-    def __init__(self):
-        self.username = None
-        self.token = None
+    def __init__(self, username=None, token=None):
+        self.username = username
+        self.token = token
 
     def load(self, filename):
         try:
