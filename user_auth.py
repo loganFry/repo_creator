@@ -1,5 +1,6 @@
 import json
 
+
 class UserAuth:
     """ Class to contain all authentication information for a user """
 
@@ -19,5 +20,3 @@ class UserAuth:
     def is_valid(self):
         valid = self.username is not None and self.token is not None
         return valid
-
-

@@ -1,10 +1,12 @@
 import json
+
 import requests
 
-class RequestLogger:
+
+class RequestLogger(object):
     """ Class to log details about HTTP requests """
 
-    def __init__(self, indent=4):        
+    def __init__(self, indent=4):
         self.updateIndent(indent)
 
     def updateIndent(self, newValue):
@@ -14,13 +16,13 @@ class RequestLogger:
             for i in range(1, newValue):
                 self.indentToken += " "
         else:
-            self.indentToken = ""            
+            self.indentToken = ""
 
     def log(self, request):
         print("Response headers: ")
         print("{")
         for header, val in request.headers.items():
-            print(self.indentToken + header + ": " + val)                    
+            print(self.indentToken + header + ": " + val)
         print("}")
 
         print("Response body: ")

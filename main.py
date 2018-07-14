@@ -1,7 +1,8 @@
-import json
 import getpass
-from user_auth import UserAuth
+import json
+
 from api import Api
+from user_auth import UserAuth
 
 # Config
 user_data_filename = "user_data.txt"
@@ -10,6 +11,7 @@ user_data_filename = "user_data.txt"
 user_data = UserAuth()
 user_data.load(user_data_filename)
 
+# Create api wrapper
 api = Api()
 
 # If the cached user credentials are valid, use them
@@ -20,7 +22,7 @@ if user_data.is_valid():
 # Otherwise get info from the user to create a new access token
 else:
     username = input("Enter your Github username: ")
-    password = getpass.getpass("Enter your Github password: ")   
+    password = getpass.getpass("Enter your Github password: ")
 
     # Make api call to create an access token
     print("Issuing request to create an Oauth token...")
@@ -36,4 +38,6 @@ else:
     with open(user_data_filename, 'w') as user_file:
         json.dump(token_json, user_file)
 
-api.create_repo(user_data)
+print("Issuing request to create your repository...")
+repo_json = api.create_repo(user_data)
+print()
