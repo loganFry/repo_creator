@@ -1,6 +1,5 @@
 import getpass
 import json
-
 from api import Api
 from user_auth import UserAuth
 

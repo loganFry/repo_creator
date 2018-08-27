@@ -44,7 +44,7 @@ class Api(object):
         }
 
         # include token to authenticate as user
-        headers = {"Authorization": "token " + auth.token}
+        headers = { "Authorization": "token " + auth.token }
 
         # api url should match base_url/user/repos
         full_url = self._base_url + self._repos_url
