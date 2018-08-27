@@ -2,6 +2,8 @@ import getpass
 import json
 from api import Api
 from user_auth import UserAuth
+from request_logger import ResponseLogger
+import os
 
 # Config
 user_data_filename = "user_data.txt"
@@ -12,6 +14,8 @@ user_data.load(user_data_filename)
 
 # Create api wrapper
 api = Api()
+
+logger = ResponseLogger()
 
 # If the cached user credentials are valid, use them
 if user_data.is_valid():
@@ -37,6 +41,8 @@ else:
     with open(user_data_filename, 'w') as user_file:
         json.dump(token_json, user_file)
 
+cwd = os.path.basename(os.getcwd()) 
+print("Current directory is " + cwd)
+
 print("Issuing request to create your repository...")
-repo_json = api.create_repo(user_data)
-print()
+repo_json = api.create_repo(user_data, cwd)

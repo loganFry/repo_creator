@@ -2,8 +2,8 @@ import json
 import requests
 
 
-class RequestLogger(object):
-    """ Class to log details about HTTP requests """
+class ResponseLogger(object):
+    """ Class to log details about HTTP request responses """
 
     def __init__(self, indent=4):
         self.updateIndent(indent)

@@ -1,7 +1,7 @@
 import uuid
 import requests
 from requests.auth import HTTPBasicAuth
-from request_logger import RequestLogger
+from request_logger import ResponseLogger
 
 
 class Api(object):
@@ -12,7 +12,7 @@ class Api(object):
     _repos_url = "/user/repos"
 
     def __init__(self, log_requests=True):
-        self.logger = RequestLogger()
+        self.logger = ResponseLogger()
         self.log_requests = log_requests
 
     def create_token(self,
